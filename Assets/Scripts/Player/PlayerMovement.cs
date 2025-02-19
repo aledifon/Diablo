@@ -8,7 +8,11 @@ public class PlayerMovement : MonoBehaviour
     #region Variables
     [Header("Flags")]
     [SerializeField] private bool canMove;           // Tell me if the player can move
-    public bool CanMove => canMove;
+    public bool CanMove 
+    {  
+        get => canMove; 
+        set => canMove = value; 
+    }
 
     [Header("Components")]
     private NavMeshAgent agent;
