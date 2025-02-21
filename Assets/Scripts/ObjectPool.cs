@@ -9,8 +9,8 @@ public class ObjectPool : MonoBehaviour
     private static ObjectPool sharedInstance;
     public static ObjectPool SharedInstance { get { return sharedInstance; } }
 
-    private IObjectPool<GameObject> pooledObjects;
-    [SerializeField] private GameObject objectToPool;
+    private IObjectPool<FireBall> pooledObjects;
+    [SerializeField] private FireBall objectToPool;
     [SerializeField] private int initialPoolSize = 10;
     [SerializeField] private int maxPoolSize = 20;
     #endregion
@@ -22,7 +22,7 @@ public class ObjectPool : MonoBehaviour
             sharedInstance = this;
 
         // Inicializar el ObjectPool con los métodos de gestión
-        pooledObjects = new ObjectPool<GameObject>(
+        pooledObjects = new ObjectPool<FireBall>(
             CreatePooledItem,
             OnTakeFromPool,
             OnReturnedToPool,
@@ -35,38 +35,43 @@ public class ObjectPool : MonoBehaviour
     #endregion
 
     #region Private Methods
-    private GameObject CreatePooledItem()
+    private FireBall CreatePooledItem()
     {
-        GameObject obj = Instantiate(objectToPool);
-        obj.SetActive(false);
+        Debug.Log(" Creando un nuevo FireBall en el Pool");
+        FireBall obj = Instantiate(objectToPool);
+        obj.gameObject.SetActive(false);
+        Debug.Log(" Objeto creado y desactivado es " + obj);
         return obj;
     }
 
-    private void OnTakeFromPool(GameObject obj)
+    private void OnTakeFromPool(FireBall obj)
     {
-        obj.SetActive(true);
+        obj.gameObject.SetActive(true);
+        Debug.Log(" Objeto activado es " + obj);
     }
 
-    private void OnReturnedToPool(GameObject obj)
+    private void OnReturnedToPool(FireBall obj)
     {
-        obj.SetActive(false);
+        obj.gameObject.SetActive(false);
+        Debug.Log(" Objeto desactivado es " + obj);
     }
 
-    private void OnDestroyPoolObject(GameObject obj)
+    private void OnDestroyPoolObject(FireBall obj)
     {
-        Destroy(obj);
+        Destroy(obj.gameObject);
+        Debug.Log(" Objeto destruido es " + obj);
     }
     #endregion
 
     #region Public Methods    
     // Método público para obtener un objeto del pool
-    public GameObject GetPooledObject()
-    {
+    public FireBall GetPooledObject()
+    {        
         return pooledObjects.Get();
     }
 
     // Método público para devolver un objeto al pool
-    public void ReturnToPool(GameObject obj)
+    public void ReturnToPool(FireBall obj)
     {
         pooledObjects.Release(obj);
     }

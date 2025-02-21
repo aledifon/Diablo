@@ -8,11 +8,7 @@ public class PlayerMovement : MonoBehaviour
     #region Variables
     [Header("Flags")]
     [SerializeField] private bool canMove;           // Tell me if the player can move
-    public bool CanMove 
-    {  
-        get => canMove; 
-        set => canMove = value; 
-    }
+    public bool CanMove => canMove;         
 
     [Header("Components")]
     private NavMeshAgent agent;
@@ -65,16 +61,31 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Rotate()
     {
-        Debug.Log("Quaternion: " + transform.rotation);
-        Debug.Log("Euler: " + transform.eulerAngles);        
+        //Debug.Log("Quaternion: " + transform.rotation);
+        //Debug.Log("Euler: " + transform.eulerAngles);        
         if (agent.velocity != Vector3.zero)
         {            
             transform.eulerAngles = new Vector3(0, Quaternion.LookRotation(agent.velocity).eulerAngles.y, 0);
         }
-    }
+    }    
     private void Animating()
     {
         anim.SetFloat("Velocity",agent.velocity.magnitude);
+    }
+    private void UpdatePlayerMovement(bool enableState)
+    {
+        canMove = enableState;
+    }
+    #endregion
+
+    #region Public Methods
+    public void EnablePlayerMovement()
+    {
+        UpdatePlayerMovement(true);
+    }
+    public void DisablePlayerMovement()
+    {
+        UpdatePlayerMovement(false);
     }
     #endregion
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Pool;
@@ -8,9 +9,9 @@ public class PlayerAttack : MonoBehaviour
 {
     #region Variables
     [Header ("Fireball Settings")]
-    [SerializeField] Rigidbody fireballPrefab;
-    [SerializeField] Transform shootPoint;
-    [SerializeField] float shootForce;
+    //[SerializeField] Rigidbody fireballPrefab;
+    [SerializeField] private Transform shootPoint;    
+    [SerializeField] private float shootForce;    
 
     // GO Components    
     private Animator anim;
@@ -51,6 +52,8 @@ public class PlayerAttack : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(1)) 
             Attack();
+
+        Debug.DrawRay(shootPoint.position, shootPoint.forward * 5, Color.red, 2f);
     }
     #endregion
 
@@ -60,10 +63,22 @@ public class PlayerAttack : MonoBehaviour
         // Play the Attack animation
         anim.Play("Attack");    
         // Blocks any player movement + reset the player velocity +
-        // Reset any possible Path on running
-        playerMovement.CanMove = false;
+        // Reset any possible Path on running        
+        playerMovement.DisablePlayerMovement();
         agent.velocity = Vector3.zero;    
         agent.ResetPath();
+        Turn();
+    }
+    private void Turn()
+    {
+        // Raycast setup
+        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        // Raycast Launch
+        if(Physics.Raycast(ray,out hit))
+        {
+            //transform.eulerAngles = new Vector3(0, Quaternion.LookRotation(hit.point).eulerAngles.y, 0);
+            transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
+        }
     }
     #endregion
 
@@ -74,12 +89,20 @@ public class PlayerAttack : MonoBehaviour
         // GO Cloning through Object Pooling Design Pattern
 
         // Gets a non active FireBallPrefab from the Object Pool
-        GameObject cloneFireballPrefab = ObjectPool.SharedInstance.GetPooledObject();
+        FireBall cloneFireballPrefab = ObjectPool.SharedInstance.GetPooledObject();
+
+        if (cloneFireballPrefab == null)
+        {
+            Debug.Log("Fireball are null");
+            return;
+        }
+
+
         // Sets its Transform
         cloneFireballPrefab.transform.position = shootPoint.position;
         cloneFireballPrefab.transform.rotation = shootPoint.rotation;    
         // Adds Force to the Prefab Rb Component
-        cloneFireballPrefab.GetComponent<Rigidbody>().AddForce(shootPoint.forward * shootForce);
+        cloneFireballPrefab.LaunchFireball(shootPoint.forward,shootForce);        
 
         //Rigidbody cloneFireballPrefab = Instantiate(fireballPrefab, 
         //                                        shootPoint.position,
