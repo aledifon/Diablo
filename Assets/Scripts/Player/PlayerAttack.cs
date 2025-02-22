@@ -53,7 +53,7 @@ public class PlayerAttack : MonoBehaviour
         if(Input.GetMouseButtonDown(1)) 
             Attack();
 
-        Debug.DrawRay(shootPoint.position, shootPoint.forward * 5, Color.red, 2f);
+        //Debug.DrawRay(shootPoint.position, shootPoint.forward * 5, Color.red, 2f);
     }
     #endregion
 

@@ -64,13 +64,13 @@ public class ObjectPool : MonoBehaviour
     #endregion
 
     #region Public Methods    
-    // Método público para obtener un objeto del pool
+    // Public method to get an object from the pool
     public FireBall GetPooledObject()
     {        
         return pooledObjects.Get();
     }
 
-    // Método público para devolver un objeto al pool
+    // Public method to return an object to the pool
     public void ReturnToPool(FireBall obj)
     {
         pooledObjects.Release(obj);
