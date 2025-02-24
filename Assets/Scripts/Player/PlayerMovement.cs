@@ -8,7 +8,9 @@ public class PlayerMovement : MonoBehaviour
     #region Variables
     [Header("Flags")]
     [SerializeField] private bool canMove;           // Tell me if the player can move
-    public bool CanMove => canMove;         
+    public bool CanMove => canMove;
+
+    [SerializeField] float turnSpeedThreshold = 0.5f;   // To avoid getting strange player's rotations
 
     [Header("Components")]
     private NavMeshAgent agent;
@@ -63,7 +65,8 @@ public class PlayerMovement : MonoBehaviour
     {
         //Debug.Log("Quaternion: " + transform.rotation);
         //Debug.Log("Euler: " + transform.eulerAngles);        
-        if (agent.velocity != Vector3.zero)
+        //if (agent.velocity != Vector3.zero)
+        if (agent.velocity.magnitude > turnSpeedThreshold)
         {            
             transform.eulerAngles = new Vector3(0, Quaternion.LookRotation(agent.velocity).eulerAngles.y, 0);
         }
